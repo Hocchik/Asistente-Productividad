@@ -77,9 +77,14 @@ los datos por sí mismo.
 
 1. Entra a <https://huggingface.co> y crea una cuenta.
 2. **New Space** → nombre `asistente-productividad` → **SDK: Docker** → plantilla *Blank* → **Public** → *Create Space*.
-3. En la pestaña **Files** → **Add file** → **Upload files**, sube el contenido de `backend/`:
-   `main.py`, `funciones.py`, `llm_service.py`, `requirements.txt`, `Dockerfile`
-   y además **este `README.md`** (Spaces necesita el bloque YAML del inicio, con `sdk: docker` y `app_port: 7860`).
+3. En la pestaña **Files** → **Add file** → **Upload files**, sube los archivos de `backend/`
+   **aplanados en la raíz del Space** (sin carpeta `backend/`, porque Hugging Face busca el
+   `Dockerfile` en la raíz y no admite subdirectorios):
+   `Dockerfile`, `main.py`, `funciones.py`, `llm_service.py`, `requirements.txt`
+   y además **este `README.md`** (Spaces necesita su bloque YAML con `sdk: docker` y `app_port: 7860`).
+
+   > Por eso el repo del Space **no** es igual al de GitHub: en GitHub el backend vive en
+   > `backend/`, en el Space va todo plano.
 4. Ve a **Settings** → **Variables and secrets** → **New secret**:
    - Name: `GEMINI_API_KEY`
    - Value: tu clave `AIza...`
