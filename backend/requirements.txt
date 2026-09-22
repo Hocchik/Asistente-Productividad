@@ -1,4 +1,5 @@
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
 google-genai==2.24.0
-pydantic==2.10.4
+# google-genai 2.24 exige pydantic>=2.12.5; no bajar de aquí.
+pydantic==2.13.5
