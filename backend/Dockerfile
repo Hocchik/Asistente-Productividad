@@ -20,4 +20,4 @@ COPY --chown=user . .
 EXPOSE 7860
 
 # Forma shell para que se expanda $PORT: Render lo inyecta; en local cae a 7860.
-CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-7860}
+CMD uvicorn josephgonzales:app --host 0.0.0.0 --port ${PORT:-7860}

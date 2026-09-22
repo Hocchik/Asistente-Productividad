@@ -26,7 +26,7 @@ asistente-productividad/
 ├── backend/
 │   ├── funciones.py     crear_tarea(), calcular_prioridad()  ← lógica pura, sin IA
 │   ├── llm_service.py   TOOLS, SYSTEM_PROMPT, procesar_solicitud()  ← loop de tool calling
-│   ├── main.py          FastAPI: CORS *, GET /, POST /procesar-solicitud
+│   ├── josephgonzales.py  FastAPI: CORS *, GET /, POST /procesar-solicitud  ← el entrypoint
 │   ├── requirements.txt fastapi, uvicorn[standard], google-genai, pydantic (versiones fijadas)
 │   ├── Dockerfile       usuario sin privilegios, CMD uvicorn en ${PORT:-7860}
 │   └── .gitignore
@@ -99,7 +99,7 @@ de pago; los Static Spaces son gratis pero sólo sirven HTML. Render mantiene fr
 tarjeta (750 h/mes, duerme a los 15 min, despierta en ~1 min).
 
 - Render inyecta `$PORT`; por eso el `CMD` del Dockerfile usa forma shell (`${PORT:-7860}`)
-  y `main.py` lee `os.environ.get("PORT", 7860)`. **No hardcodear 7860.**
+  y `josephgonzales.py` lee `os.environ.get("PORT", 7860)`. **No hardcodear 7860.**
 - Root Directory `backend` en la config de Render: no hay que aplanar ni mover archivos.
 - El README ya no lleva frontmatter YAML (era sólo para HF).
 

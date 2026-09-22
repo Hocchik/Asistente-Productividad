@@ -80,7 +80,7 @@ los datos por sí mismo.
    | **Branch** | `main` |
    | **Root Directory** | `backend` |
    | **Build Command** | `pip install -r requirements.txt` |
-   | **Start Command** | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
+   | **Start Command** | `uvicorn josephgonzales:app --host 0.0.0.0 --port $PORT` |
    | **Instance Type** | **Free** |
 
    > `Root Directory = backend` es lo que hace que funcione sin mover archivos: Render
@@ -126,7 +126,7 @@ cd backend
 python -m venv .venv && .venv\Scripts\activate    # Windows PowerShell
 pip install -r requirements.txt
 $env:GEMINI_API_KEY="AIza_tu_clave"               # Windows PowerShell
-uvicorn main:app --reload --port 7860
+uvicorn josephgonzales:app --reload --port 7860
 ```
 
 Luego pon `const BACKEND_URL = "http://127.0.0.1:7860";` en `script.js` y abre `frontend/index.html`
@@ -168,7 +168,7 @@ curl -X POST https://asistente-productividad.onrender.com/procesar-solicitud \
 ```
 asistente-productividad/
 ├── backend/
-│   ├── main.py            # FastAPI: CORS, healthcheck, POST /procesar-solicitud
+│   ├── josephgonzales.py  # FastAPI: CORS, healthcheck, POST /procesar-solicitud
 │   ├── funciones.py       # Lógica de negocio pura (sin IA)
 │   ├── llm_service.py     # Cliente Gemini, tools y loop de function calling
 │   ├── requirements.txt
