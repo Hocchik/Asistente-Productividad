@@ -8,16 +8,16 @@ Demo full-stack: el usuario escribe una solicitud en lenguaje natural y un LLM d
 función Python llamar** para estructurarla como tarea. El LLM no genera los datos de la tarea:
 sólo extrae argumentos y elige la herramienta. Python ejecuta la lógica.
 
-Sin base de datos. Sin framework de frontend. Todo en free tier (Google AI Studio + HF Spaces + Vercel).
+Sin base de datos. Sin framework de frontend. Todo en free tier (Google AI Studio + Render + Vercel).
 
 ## Stack y despliegue
 
 | Parte | Tecnología | Destino |
 |---|---|---|
-| Backend | FastAPI + `google-genai`, Docker `python:3.11-slim`, puerto **7860** | Hugging Face Spaces (`sdk: docker`) |
+| Backend | FastAPI + `google-genai`, escucha en `$PORT` (fallback **7860**) | Render free tier, Root Directory `backend` |
 | Frontend | HTML/CSS/JS puro | Vercel (estático, Root Directory = `frontend`) |
 | Modelo | `gemini-3.8-flash` (override con env `GEMINI_MODEL`) | Google AI Studio |
-| Secreto | `GEMINI_API_KEY` (env var / HF Secret) | nunca en el repo |
+| Secreto | `GEMINI_API_KEY` (env var en Render) | nunca en el repo |
 
 ## Mapa de archivos
 
@@ -28,13 +28,13 @@ asistente-productividad/
 │   ├── llm_service.py   TOOLS, SYSTEM_PROMPT, procesar_solicitud()  ← loop de tool calling
 │   ├── main.py          FastAPI: CORS *, GET /, POST /procesar-solicitud
 │   ├── requirements.txt fastapi, uvicorn[standard], google-genai, pydantic (versiones fijadas)
-│   ├── Dockerfile       EXPOSE 7860, CMD uvicorn main:app
+│   ├── Dockerfile       usuario sin privilegios, CMD uvicorn en ${PORT:-7860}
 │   └── .gitignore
 ├── frontend/
 │   ├── index.html       textarea#solicitud, button#btn-procesar, #estado, #resultado
 │   ├── style.css        variables CSS, tarjetas, etiquetas .alta/.normal/.baja
 │   └── script.js        BACKEND_URL (línea 3), procesar(), pintar(), tarjetaTarea()
-└── README.md            metadata YAML de HF + guía de despliegue + 3 casos de prueba
+└── README.md            guía de despliegue (Render + Vercel) + 3 casos de prueba
 ```
 
 ## Contratos clave (no romper sin actualizar ambos lados)
@@ -92,11 +92,22 @@ la API estilo OpenAI que se usaba con Groq:
 2. Reunión + lunes 09:30 + Carlos, Elena, Pedro + "prioridad alta" → `tarea_generada`, prioridad `alta`.
 3. "documentación del sistema para el próximo miércoles" → `respuesta_texto` (falta hora y participantes).
 
+## Hosting: por qué Render
+
+Hugging Face Spaces **dejó de servir**: desde julio 2026 los Spaces Docker y Gradio exigen PRO
+de pago; los Static Spaces son gratis pero sólo sirven HTML. Render mantiene free tier sin
+tarjeta (750 h/mes, duerme a los 15 min, despierta en ~1 min).
+
+- Render inyecta `$PORT`; por eso el `CMD` del Dockerfile usa forma shell (`${PORT:-7860}`)
+  y `main.py` lee `os.environ.get("PORT", 7860)`. **No hardcodear 7860.**
+- Root Directory `backend` en la config de Render: no hay que aplanar ni mover archivos.
+- El README ya no lleva frontmatter YAML (era sólo para HF).
+
 ## Antes de desplegar
 
-- [ ] `GEMINI_API_KEY` como Secret en el Space (no en el código).
-- [ ] `BACKEND_URL` en `script.js` apuntando al Space, **sin barra final**.
-- [ ] `README.md` subido al Space junto a los archivos de `backend/` (HF lee su YAML).
+- [ ] `GEMINI_API_KEY` como Environment Variable en Render (no en el código).
+- [ ] `BACKEND_URL` en `script.js` apuntando a la URL de Render, **sin barra final**.
+- [ ] Root Directory `backend` y Instance Type **Free** en Render.
 
 ## Convenciones al editar
 

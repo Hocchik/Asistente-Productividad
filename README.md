@@ -1,22 +1,12 @@
----
-title: Asistente de Productividad
-emoji: 🗂️
-colorFrom: indigo
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Asistente de Productividad
 
 Convierte solicitudes escritas en lenguaje natural en **tareas estructuradas**, usando un LLM
 (Gemini 3.8 Flash) que decide **cuándo** llamar a funciones Python reales — no genera
 los datos por sí mismo.
 
-- **Backend:** FastAPI + Gemini *function calling* → Hugging Face Spaces (Docker, puerto 7860)
+- **Backend:** FastAPI + Gemini *function calling* → Render (free tier)
 - **Frontend:** HTML + CSS + JavaScript puro (sin frameworks) → Vercel
-- **Sin base de datos.** Todo funciona en el *free tier* de Google AI Studio, Hugging Face y Vercel, sin tarjeta de crédito.
+- **Sin base de datos.** Todo funciona en el *free tier* de Google AI Studio, Render y Vercel, sin tarjeta de crédito.
 
 ## Cómo funciona
 
@@ -71,30 +61,43 @@ los datos por sí mismo.
 > añade la variable `GEMINI_MODEL=gemini-3.5-flash-lite` en el Space: es un modelo más ligero
 > con límite diario más alto, y funciona igual con estas dos herramientas.
 
-> Nunca subas la clave al repositorio. En local usa una variable de entorno; en Hugging Face usa un *Secret*.
+> Nunca subas la clave al repositorio. En local usa una variable de entorno; en Render usa una *Environment Variable*.
 
-## 2. Desplegar el backend en Hugging Face Spaces
+## 2. Desplegar el backend en Render
 
-1. Entra a <https://huggingface.co> y crea una cuenta.
-2. **New Space** → nombre `asistente-productividad` → **SDK: Docker** → plantilla *Blank* → **Public** → *Create Space*.
-3. En la pestaña **Files** → **Add file** → **Upload files**, sube los archivos de `backend/`
-   **aplanados en la raíz del Space** (sin carpeta `backend/`, porque Hugging Face busca el
-   `Dockerfile` en la raíz y no admite subdirectorios):
-   `Dockerfile`, `main.py`, `funciones.py`, `llm_service.py`, `requirements.txt`
-   y además **este `README.md`** (Spaces necesita su bloque YAML con `sdk: docker` y `app_port: 7860`).
+> **Por qué Render y no Hugging Face Spaces:** desde julio de 2026 los Spaces de tipo
+> Docker y Gradio requieren plan PRO de pago. Los Static Spaces siguen siendo gratis, pero
+> sólo sirven HTML y no pueden ejecutar Python. Render mantiene un free tier real sin tarjeta.
 
-   > Por eso el repo del Space **no** es igual al de GitHub: en GitHub el backend vive en
-   > `backend/`, en el Space va todo plano.
-4. Ve a **Settings** → **Variables and secrets** → **New secret**:
-   - Name: `GEMINI_API_KEY`
-   - Value: tu clave `AIza...`
+1. Entra a <https://render.com> y crea una cuenta (**Sign up with GitHub** es lo más cómodo).
+2. **New +** → **Web Service** → conecta tu repositorio de GitHub y selecciónalo.
+3. Configura el servicio:
 
-   (Opcional) Añade una **variable** `GEMINI_MODEL` si quieres forzar otro modelo.
-5. El Space se reconstruye solo. Cuando el estado sea **Running**, tu URL de API es:
-   `https://<tu-usuario>-asistente-productividad.hf.space`
-6. Verifica el healthcheck abriendo esa URL en el navegador: debe responder `{"estado":"ok",...}`.
+   | Campo | Valor |
+   |---|---|
+   | **Name** | `asistente-productividad` |
+   | **Language** | `Python 3` |
+   | **Branch** | `main` |
+   | **Root Directory** | `backend` |
+   | **Build Command** | `pip install -r requirements.txt` |
+   | **Start Command** | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
+   | **Instance Type** | **Free** |
 
-> Alternativa por git: `git clone https://huggingface.co/spaces/<usuario>/asistente-productividad`, copia los archivos, `git add . && git commit -m "deploy" && git push`.
+   > `Root Directory = backend` es lo que hace que funcione sin mover archivos: Render
+   > trata esa carpeta como la raíz del servicio.
+   >
+   > Si prefieres usar el `Dockerfile` incluido, elige **Language: Docker** y deja vacíos
+   > Build y Start Command. Funciona igual.
+
+4. Baja a **Environment Variables** → **Add Environment Variable**:
+   - Key: `GEMINI_API_KEY` · Value: tu clave `AIza...`
+   - (Opcional) Key: `GEMINI_MODEL` · Value: `gemini-3.5-flash-lite`, si topas con los límites.
+5. **Create Web Service**. El primer build tarda unos minutos.
+6. Cuando el estado sea **Live**, tu URL es `https://asistente-productividad.onrender.com`
+   (Render puede añadirle un sufijo aleatorio; usa la que te muestre arriba).
+7. Ábrela en el navegador: debe responder `{"estado":"ok",...}`.
+
+Cada `git push` a `main` redespliega el servicio automáticamente.
 
 ## 3. Desplegar el frontend en Vercel
 
@@ -151,7 +154,7 @@ bloque *"Faltan datos"* pidiendo la hora y quiénes participan.
 ### Probar la API directamente
 
 ```bash
-curl -X POST https://tu-usuario-asistente-productividad.hf.space/procesar-solicitud \
+curl -X POST https://asistente-productividad.onrender.com/procesar-solicitud \
   -H "Content-Type: application/json" \
   -d '{"solicitud":"Crear una tarea para entregar el informe el viernes a las 16:00 con María y José."}'
 ```
@@ -165,13 +168,13 @@ asistente-productividad/
 │   ├── funciones.py       # Lógica de negocio pura (sin IA)
 │   ├── llm_service.py     # Cliente Gemini, tools y loop de function calling
 │   ├── requirements.txt
-│   ├── Dockerfile         # python:3.11-slim, uvicorn en el puerto 7860
+│   ├── Dockerfile         # python:3.11-slim, uvicorn en $PORT (7860 por defecto)
 │   └── .gitignore
 ├── frontend/
 │   ├── index.html         # Textarea + botón + zonas de estado y resultado
 │   ├── style.css          # Diseño centrado, sin dependencias externas
 │   └── script.js          # BACKEND_URL + fetch + render de tarjetas
-└── README.md              # Esta guía (y metadata de Hugging Face Spaces)
+└── README.md              # Esta guía
 ```
 
 ## Notas y limitaciones
@@ -180,6 +183,7 @@ asistente-productividad/
 - **Sin persistencia**: las tareas se devuelven en la respuesta, no se guardan.
 - Las fechas se conservan **tal como las escribe el usuario** (*"viernes"*, *"el próximo miércoles"*);
   no hay resolución a calendario, por diseño, para no inventar datos.
-- El Space gratuito **se duerme** tras un rato sin uso: la primera petición puede tardar unos segundos.
+- El plan gratuito de Render **duerme el servicio tras 15 min sin tráfico**: la primera petición
+  después de ese rato tarda ~1 minuto en responder. Incluye 750 h/mes, de sobra para una demo.
 - Se usa la **Interactions API** de Gemini en modo `store=False`: el historial lo gestiona el backend,
   no se guarda conversación en los servidores de Google.

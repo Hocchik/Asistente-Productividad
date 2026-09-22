@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
-# El contenedor de Hugging Face Spaces corre con el usuario 1000. Se crea y se
-# cambia a él ANTES de copiar archivos para evitar problemas de permisos.
+# Se corre como usuario sin privilegios, creado ANTES de copiar archivos para
+# evitar problemas de permisos.
 RUN useradd -m -u 1000 user
 USER user
 
@@ -19,4 +19,5 @@ COPY --chown=user . .
 
 EXPOSE 7860
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Forma shell para que se expanda $PORT: Render lo inyecta; en local cae a 7860.
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-7860}

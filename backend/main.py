@@ -1,6 +1,7 @@
-"""API del asistente de productividad. Pensada para Hugging Face Spaces (puerto 7860)."""
+"""API del asistente de productividad. Escucha en $PORT (7860 por defecto)."""
 
 import logging
+import os
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -59,4 +60,4 @@ def procesar_solicitud(entrada: SolicitudEntrada):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=7860)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 7860)))
