@@ -101,17 +101,21 @@ Cada `git push` a `main` redespliega el servicio automáticamente.
 
 ## 3. Desplegar el frontend en Vercel
 
-1. Abre `frontend/script.js` y pega tu URL del Space en la primera línea (**sin barra final**):
+> Despliega primero el backend: necesitas su URL de Render para este paso.
+
+1. Abre `frontend/script.js` y pega la URL de Render en `BACKEND_URL` (**sin barra final**):
    ```js
-   const BACKEND_URL = "https://tu-usuario-asistente-productividad.hf.space";
+   const BACKEND_URL = "https://asistente-productividad.onrender.com";
    ```
-2. Sube el proyecto a GitHub.
-3. Entra a <https://vercel.com>, inicia sesión con GitHub → **Add New… → Project** → importa el repo.
-4. Configura:
+   Haz commit y push: `git add -A && git commit -m "Apuntar al backend" && git push`
+2. Entra a <https://vercel.com>, inicia sesión con GitHub → **Add New… → Project** → importa el repo.
+3. Configura:
    - **Framework Preset:** `Other`
    - **Root Directory:** `frontend`
-   - Build Command y Output Directory: **vacíos** (es sitio estático)
-5. **Deploy**. Obtendrás una URL tipo `https://asistente-productividad.vercel.app`.
+   - Build Command y Output Directory: **vacíos** (es sitio estático, no hay build)
+4. **Deploy**. Obtendrás una URL tipo `https://asistente-productividad.vercel.app`.
+
+Cada push a `main` redespliega el frontend automáticamente.
 
 > Alternativa sin GitHub: `npm i -g vercel`, luego `cd frontend && vercel --prod`.
 

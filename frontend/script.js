@@ -1,6 +1,7 @@
-// Pega aquí la URL de tu Space de Hugging Face, sin barra final.
-// Ej.: "https://tu-usuario-asistente-productividad.hf.space"
-const BACKEND_URL = "https://TU-USUARIO-asistente-productividad.hf.space";
+// Pega aquí la URL de tu servicio en Render, SIN barra final.
+// Ej.: "https://asistente-productividad.onrender.com"
+// En local: "http://127.0.0.1:7860"
+const BACKEND_URL = "https://TU-SERVICIO.onrender.com";
 
 const textarea = document.getElementById("solicitud");
 const boton = document.getElementById("btn-procesar");
