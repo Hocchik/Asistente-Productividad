@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistente de Productividad</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="contenedor">
+    <header>
+      <h1>Asistente de Productividad</h1>
+      <p class="subtitulo">Escribe lo que necesitas en lenguaje natural y lo convertimos en tareas.</p>
+    </header>
+
+    <section class="tarjeta">
+      <label for="solicitud">Tu solicitud</label>
+      <textarea
+        id="solicitud"
+        rows="5"
+        placeholder="Ej.: Crear una tarea para entregar el informe de pruebas el viernes a las 16:00. Participarán María y José."
+      ></textarea>
+
+      <button id="btn-procesar" type="button">Procesar solicitud</button>
+
+      <div id="estado" class="estado" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="resultado" class="resultado"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
