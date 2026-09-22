@@ -107,7 +107,7 @@ Cada `git push` a `main` redespliega el servicio automáticamente.
    ```js
    const BACKEND_URL = "https://asistente-productividad.onrender.com";
    ```
-   Haz commit y push: `git add -A && git commit -m "Apuntar al backend" && git push`
+   (Ya está configurada con el backend desplegado.) Haz commit y push: `git add -A && git commit -m "Apuntar al backend" && git push`
 2. Entra a <https://vercel.com>, inicia sesión con GitHub → **Add New… → Project** → importa el repo.
 3. Configura:
    - **Framework Preset:** `Other`

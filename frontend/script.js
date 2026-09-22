@@ -1,7 +1,6 @@
-// Pega aquí la URL de tu servicio en Render, SIN barra final.
-// Ej.: "https://asistente-productividad.onrender.com"
-// En local: "http://127.0.0.1:7860"
-const BACKEND_URL = "https://TU-SERVICIO.onrender.com";
+// Backend desplegado en Render. Sin barra final.
+// Para desarrollo local, cambiar por "http://127.0.0.1:7860".
+const BACKEND_URL = "https://asistente-productividad.onrender.com";
 
 const textarea = document.getElementById("solicitud");
 const boton = document.getElementById("btn-procesar");
